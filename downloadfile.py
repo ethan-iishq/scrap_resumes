@@ -49,6 +49,7 @@ def save_resume_file(filepath, filename, dlurl, cookie_str=""):
     try:
         dlfile = download_file(dlurl, cookie_str)
     except BaseException as e:
+        print("下载 %s 简历失败" % filename)
         return -1
     else:
         with open(filename, 'wb') as f:
