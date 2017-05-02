@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.ERROR,
                 filemode='w')
 
 DOMAIN_NAME = '.zhaopin.com'
+PHANTOMJS_PATH = r'E:\programs\phantomjs-2.1.1-windows\bin\phantomjs.exe'
 URL = r'http://www.zhaopin.com'
 URL1 = r"http://rd2.zhaopin.com/s/homepage.asp"
 URL2 = r'http://rd2.zhaopin.com/s/resuadmi/vacancyList.asp'
@@ -74,7 +75,7 @@ def get_cookie_str(cookie_list):
 # 获取Google的cookie，并设置到driver
 def set_login_cookies_zhiliansize():
     cookie_list = get_chrome_cookies_list(DOMAIN_NAME)
-    driver = webdriver.PhantomJS(executable_path=r'D:\Programs\phantomjs-2.1.1-windows\bin\phantomjs.exe')
+    driver = webdriver.PhantomJS(executable_path=PHANTOMJS_PATH)
     driver.delete_all_cookies()
     for cookie in cookie_list:
         driver.add_cookie(cookie)
