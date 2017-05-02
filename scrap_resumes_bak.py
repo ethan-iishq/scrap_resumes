@@ -26,7 +26,7 @@ def capture(browser, save_fn="files\capture.png"):
       var step = 100;
       window.scroll(0, 0);
 
-      function f() {
+      function f() {scrap_resumes_bak.py
         if (y < document.body.scrollHeight) {
           y += step;
           window.scroll(0, y);
