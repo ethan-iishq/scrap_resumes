@@ -7,7 +7,7 @@ import pymysql
 import time
 
 DOMAIN_NAME = '.zhaopin.com'
-URL = r"http://www.zhaopin.com"
+URL = r"https://passport.zhaopin.com/org/login"
 URL2 = r'http://rd2.zhaopin.com/s/resuadmi/vacancyList.asp'
 CHROME_EDRIVER_PATH = r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 INSERT_SQL = "insert into resume_info(filename, jobname, downloadurl)  values('%s', '%s', '%s');"
@@ -16,7 +16,8 @@ INSERT_SQL = "insert into resume_info(filename, jobname, downloadurl)  values('%
 def get_resume_links():
     #点击标签页显示待沟通简历列表
     browser.find_element_by_css_selector("span#submitBack").click()
-    time.sleep(5)
+    time.sleep(2)
+    WebDriverWait(browser, 5).until(lambda the_broswer:the_broswer.find_elements_by_class_name("link").is_displayed())
     # 获取该职位下的简历列表
     resume_as = browser.find_elements_by_class_name("link")
     for resume_a in resume_as:
@@ -36,9 +37,10 @@ def get_resume_links():
                 pre_save_btn_span = browser.find_element_by_css_selector("span.resume-preview-button-span.preview-icon1")
                 pre_save_btn_span.click()
 
-                WebDriverWait(browser, 15).until(lambda the_broswer:the_broswer.find_element_by_css_selector("span.popupConfirmBtn").is_displayed())
+                WebDriverWait(browser, 20).until(lambda the_broswer:the_broswer.find_element_by_css_selector("span.popupConfirmBtn").is_displayed())
                 next_step_btn_span = browser.find_element_by_css_selector("span.popupConfirmBtn")
                 next_step_btn_span.click()
+                WebDriverWait(browser, 10).until(lambda the_broswer:the_broswer.find_element_by_css_selector("span.popupConfirmBtn").is_displayed())
                 save_btn_span = browser.find_element_by_css_selector("span.popupConfirmBtn")
                 download_url = save_btn_span.find_element_by_tag_name("a").get_attribute("href")
                 values = (filename, job_name, download_url)
@@ -71,7 +73,7 @@ def judge_scrap_continue(job_access_dict):
 if __name__ == '__main__' :
 
     browser = webdriver.Chrome(executable_path=CHROME_EDRIVER_PATH)
-    browser.get(URL2)
+    browser.get(URL)
     print(browser.get_cookies())
     # time.sleep(5)
 
@@ -99,8 +101,18 @@ if __name__ == '__main__' :
     # 访问智联网职位列表
     browser.get(URL2)
 
+
     # 获取职位列表
     job_tds = browser.find_elements_by_class_name("bolditem")
+    if len(job_tds) == 0:
+        print("请登录")
+        time.sleep(15)
+        browser.get(URL2)
+        job_tds = browser.find_elements_by_class_name("bolditem")
+        if len(job_tds) == 0:
+            print("请先完成登录，再试！")
+            exit(1)
+
     job_access_dict = dict()
     for job_td in job_tds:
         job_access_dict[job_td.text] = 0
